@@ -9,18 +9,17 @@ export const Home = () => {
     });
 
     useEffect(() => {
-        // Funkcja do pobierania danych
         const fetchSummaryData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/summary'); // Upewnij się, że URL jest poprawny
-                console.log('Dane z API:', response.data); // Dodaj logowanie odpowiedzi z API
+                const response = await axios.get('http://localhost:5000/api/summary');
+                console.log('Dane z API:', response.data);
                 setSummaryData(response.data);
             } catch (error) {
                 console.error('Błąd podczas ładowania danych:', error);
             }
         };
 
-        fetchSummaryData(); // Wywołanie funkcji przy załadowaniu komponentu
+        fetchSummaryData();
     }, []);
 
     return (
@@ -45,6 +44,10 @@ export const Home = () => {
                     </tr>
                     <tr className="border-b border-gray-600">
                         <td className="py-2 px-4 text-white">Ilość wystawionych cytacji:</td>
+                        <td className="py-2 px-4 text-white">{summaryData.citationsCount}</td>
+                    </tr>
+                    <tr className="border-b border-gray-600">
+                        <td className="py-2 px-4 text-white">Kwota wystawionych cytacji:</td>
                         <td className="py-2 px-4 text-white">{summaryData.citationsCount}</td>
                     </tr>
                     </tbody>

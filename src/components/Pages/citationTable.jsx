@@ -5,7 +5,6 @@ export const CitationTable = () => {
     const [citations, setCitations] = useState([]);
 
     useEffect(() => {
-        // Pobieranie danych z bazy
         const fetchCitations = async () => {
             try {
                 const response = await axios.get("http://localhost:5000/api/citationParameters");

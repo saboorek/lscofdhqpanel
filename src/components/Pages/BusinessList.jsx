@@ -6,7 +6,6 @@ import axios from 'axios';
 import { Dialog } from "@headlessui/react";
 
 export const BusinessList = () => {
-    const { id } = useParams();
     const [businesses, setBusinesses] = useState([]);
     const [isAddBusinessModalOpen, setIsAddBusinessModalOpen] = useState(false);
     const [reports, setReports] = useState([]);
@@ -33,18 +32,16 @@ export const BusinessList = () => {
         navigate(`/businesses/${businessId}`);
     };
 
-    // Pobieranie listy biznesów
     useEffect(() => {
         axios.get('http://localhost:5000/api/businesses')
             .then(response => {
                 setBusinesses(response.data);
-                // Dla każdego biznesu pobieramy raporty
                 response.data.forEach(business => {
                     axios.get(`http://localhost:5000/api/businesses/${business._id}/reports`)
                         .then(reportResponse => {
                             setReports(prevReports => ({
                                 ...prevReports,
-                                [business._id]: reportResponse.data // Przechowujemy raporty według ID biznesu
+                                [business._id]: reportResponse.data
                             }));
                         })
                         .catch(error => console.error('Błąd przy pobieraniu raportów:', error));
@@ -53,7 +50,6 @@ export const BusinessList = () => {
             .catch(error => console.error('Błąd przy pobieraniu biznesów:', error));
     }, []);
 
-    // Dodawanie nowego biznesu
     const handleAddBusiness = (e) => {
         e.preventDefault();
 
@@ -61,7 +57,7 @@ export const BusinessList = () => {
 
         axios.post('http://localhost:5000/api/businesses', newBusiness)
             .then(response => {
-                setBusinesses([...businesses, response.data]); // Aktualizuj listę biznesów
+                setBusinesses([...businesses, response.data]);
                 setName('');
                 setOwner('');
                 setAddress('');
@@ -75,17 +71,16 @@ export const BusinessList = () => {
 
     const calculateDaysToNextControl = (lastReportDate) => {
         const nextControlDate = new Date(lastReportDate);
-        nextControlDate.setDate(nextControlDate.getDate() + 60); // dodajemy 60 dni do daty ostatniej kontroli
+        nextControlDate.setDate(nextControlDate.getDate() + 60);
 
         const today = new Date();
-        const timeDifference = nextControlDate - today; // różnica czasu między datą następnej kontroli a dzisiaj
+        const timeDifference = nextControlDate - today;
 
-        const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24)); // przeliczamy różnicę na dni
+        const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
-        return daysLeft >= 0 ? daysLeft : -1; // -1 oznacza, że kontrola już minęła
+        return daysLeft >= 0 ? daysLeft : -1;
     };
 
-// Sortowanie biznesów na podstawie dni do kontroli (od najmniejszych)
     const sortedBusinesses = businesses.map(business => {
         const businessReports = reports[business._id] || [];
         const lastReport = businessReports.length > 0 ? businessReports[0] : null;
@@ -93,14 +88,13 @@ export const BusinessList = () => {
         return { ...business, daysToNextControl };
     }).sort((a, b) => a.daysToNextControl - b.daysToNextControl);
 
-// Wyświetlanie tekstu z odpowiednim formatowaniem
     const formatDaysText = (days) => {
         if (days === 1) {
             return "1 dzień";
         } else if (days > 1) {
             return `${days} dni`;
         } else {
-            return "Kontrola minęła"; // Jeśli dni są ujemne, oznacza, że kontrola minęła
+            return "Kontrola minęła";
         }
     };
 
@@ -144,7 +138,7 @@ export const BusinessList = () => {
                                 return (
                                     <tr key={business._id}
                                         className={`border-b border-gray-600 hover:bg-gray-700 cursor-pointer ${daysToNextControl <= 7 ? 'bg-red-800 hover:bg-red-700' : ''}`}
-                                        onClick={() => handleRowClick(business._id)} // przekierowanie na stronę biznesu
+                                        onClick={() => handleRowClick(business._id)}
                                     >
                                         <td className="py-2 px-4">{business.name}</td>
                                         <td className="py-2 px-4">{lastReportDate}</td>

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faEdit, faTrash, faFileInvoiceDollar} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faEdit, faTrash, faFileInvoiceDollar, faGlobe} from "@fortawesome/free-solid-svg-icons";
 import {useParams, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import {Dialog} from '@headlessui/react';
@@ -258,7 +258,7 @@ export const BusinessDetails = () => {
                                 rel="noopener noreferrer"
                                 className="text-blue-500 underline"
                             >
-                                Klik
+                                <FontAwesomeIcon icon={faGlobe} />
                             </a>
                         ) : (
                             "Brak linku"
@@ -450,8 +450,8 @@ export const BusinessDetails = () => {
                                 onChange={(date) => setControlDate(date)}
                                 showTimeSelect
                                 timeFormat="HH:mm"
-                                timeIntervals={15} // interwał czasowy 15 minut
-                                dateFormat="Pp" // Format daty i godziny
+                                timeIntervals={15}
+                                dateFormat="Pp"
                                 className="w-full bg-gray-700 text-white p-2 rounded"
                             />
 
@@ -507,7 +507,7 @@ export const BusinessDetails = () => {
                                 </select>
                             </div>
 
-                            {/* Kontener dla przycisku - dodajemy flex i justify-center */}
+                            {/* Kontener dla przycisku */}
                             <div className="mt-4 flex justify-center">
                                 <button
                                     onClick={handleSubmitReport}
@@ -566,8 +566,8 @@ export const BusinessDetails = () => {
                                 onChange={(date) => setCitationDate(date)}
                                 showTimeSelect
                                 timeFormat="HH:mm"
-                                timeIntervals={15} // interwał czasowy 15 minut
-                                dateFormat="Pp" // Format daty i godziny
+                                timeIntervals={15}
+                                dateFormat="Pp"
                                 className="w-full bg-gray-700 text-white p-2 rounded"
                             />
 
@@ -587,7 +587,7 @@ export const BusinessDetails = () => {
                                 className="w-full bg-gray-800 text-white p-2 rounded mt-4"
                             />
 
-                            {/* Kontener dla przycisku - dodajemy flex i justify-center */}
+                            {/* Kontener dla przycisku */}
                             <div className="mt-4 flex justify-center">
                                 <button
                                     onClick={handleSubmitCitation}

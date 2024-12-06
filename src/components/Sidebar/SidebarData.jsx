@@ -12,7 +12,6 @@ export const sidebarItems = [
     {type: "item", href: "/", icon: faHome, label: "Dashboard"},
     {type: "title", title: "Panel Administracyjny"},
     {type: "item", href: "/manageParameters", icon: faFile, label: "Zarządzanie parametrami"},
-    {type: "item", href: "#", icon: faFile, label: "Kolejna zakładka dla admina"},
     {type: "title", title: "Panel Supervisory"},
     {type: "item", href: "#", icon: faFile, label: "Raporty z kontroli"},
     {type: "item", href: "#", icon: faFileInvoiceDollar, label: "Cytacje"},

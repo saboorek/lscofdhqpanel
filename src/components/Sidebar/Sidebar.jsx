@@ -22,6 +22,7 @@ export const Sidebar = () => {
                 <p>© 2024 A site created for a LSCoFD faction running on the Vibe Roleplay server.
                     All rights reserved.</p>
                 <p>Author: Saboorek</p>
+                
             </footer>
         </div>
     );
