@@ -6,6 +6,7 @@ export const Home = () => {
         activeBusinesses: 0,
         reportsCount: 0,
         citationsCount: 0,
+        totalCitationsAmount: 0,
     });
 
     useEffect(() => {
@@ -48,7 +49,7 @@ export const Home = () => {
                     </tr>
                     <tr className="border-b border-gray-600">
                         <td className="py-2 px-4 text-white">Kwota wystawionych cytacji:</td>
-                        <td className="py-2 px-4 text-white">{summaryData.citationsCount}</td>
+                        <td className="py-2 px-4 text-white">$ {summaryData.totalCitationsAmount}</td>
                     </tr>
                     </tbody>
                 </table>

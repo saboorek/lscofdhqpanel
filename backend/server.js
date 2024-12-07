@@ -191,7 +191,7 @@ app.delete('/api/businesses/:id', async (req, res) => {
 
 app.put('/api/businesses/:id', async (req, res) => {
     const {id} = req.params;
-    const {notes} = req.body;  // Odbieramy nową wartość notatek
+    const {notes} = req.body;
 
     try {
         const business = await Business.findById(id);
@@ -249,19 +249,30 @@ app.get('/api/businesses/:id/reports', async (req, res) => {
 
 app.get('/api/summary', async (req, res) => {
     try {
-
         const activeBusinesses = await Business.countDocuments();
         const reportsCount = await Report.countDocuments();
-        citationsCount = await Citation.countDocuments();
+        const citationsCount = await Citation.countDocuments();
+
+        const totalCitationsAmountResult = await Citation.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalCitationsAmount: { $sum: "$citationAmount" }
+                }
+            }
+        ]);
+
+        const totalCitationsAmount = totalCitationsAmountResult.length > 0 ? totalCitationsAmountResult[0].totalCitationsAmount : 0;
 
         res.json({
             activeBusinesses,
             reportsCount,
             citationsCount,
+            totalCitationsAmount,
         });
     } catch (error) {
         console.error('Błąd pobierania danych:', error);
-        res.status(500).json({error: 'Błąd serwera'});
+        res.status(500).json({ error: 'Błąd serwera' });
     }
 });
 
