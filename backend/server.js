@@ -75,7 +75,7 @@ app.use(passport.session());
 app.get('/auth/discord', passport.authenticate('discord'));
 
 app.get('/auth/discord/callback', passport.authenticate('discord', {
-        failureRedirect: '/login',
+        failureRedirect: '/',
         successRedirect: 'http://localhost:5173/dashboard'
     })
 );
