@@ -14,16 +14,31 @@ const UserMenu = ({ user, logout }) => {
         return null;
     }
 
+    const sortedRoles = user.guildRoles.sort((a, b) => {
+        // Określenie priorytetów ról
+        const priority = { ADMINISTRATOR: 100 };
+        const priorityA = priority[a] || 0; // Rola bez priorytetu otrzymuje wartość 0
+        const priorityB = priority[b] || 0;
+
+        // Sortowanie w kolejności malejącej priorytetów
+        return priorityB - priorityA;
+    });
+    const topRole = sortedRoles.length > 0 ? sortedRoles[0] : "Brak roli";
+
     return (
         <div className="absolute top-4 right-4">
             <Menu as="div" className="relative">
-                <Menu.Button className="flex items-center bg-gray-900 p-2 rounded-full hover:bg-gray-700 transition-colors">
+                <Menu.Button
+                    className="flex items-center bg-gray-900 p-2 rounded-full hover:bg-gray-700 transition-colors">
                     <img
                         src={avatarUrl}
                         alt="Avatar"
                         className="w-8 h-8 rounded-full mr-2"
                     />
-                    <span className="text-white">{user.username}</span>
+                    <div className="flex flex-col items-start w-28"> {/* Dodano sztywna szerokość */}
+                        <span className="text-white font-medium truncate text-center">{user.username}</span>
+                        <span className="text-gray-400 text-xs truncate">{topRole}</span>
+                    </div>
                 </Menu.Button>
 
                 <Transition

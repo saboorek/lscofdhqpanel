@@ -1,5 +1,4 @@
 const citationParameters = require("../models/CitationParameters");
-const User = require("../models/User");
 
 const ParametersController = {
     getCitationParameters: async (req, res) => {
@@ -39,15 +38,6 @@ const ParametersController = {
             res.status(500).json({message: err.message});
         }
     },
-    getUsers: async (req, res) => {
-        try {
-            const users = await User.find();
-            res.json(users);
-        } catch (error) {
-            console.error("Błąd podczas pobierania użytkowników:", error);
-            res.status(500).json({ error: "Błąd serwera" });
-        }
-    }
 };
 
 module.exports = ParametersController;
