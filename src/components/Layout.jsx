@@ -5,10 +5,13 @@ import {useLocation} from "react-router-dom";
 
 export function Layout({children}) {
     const location = useLocation();
-    const isLoginPage = location.pathname === "/";
+    const isLoginPage = location.pathname === "/login";
+    const isUnauthorizedPage = location.pathname === "/unauthorized";
+
+    const hide = !(isLoginPage || isUnauthorizedPage);
     return (
         <div className="flex min-h-screen h-screen w-full">
-            {!isLoginPage && (
+            {hide && (
                 <div className="flex">
                     <Sidebar/>
                 </div>
