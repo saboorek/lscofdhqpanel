@@ -1,4 +1,5 @@
 const citationParameters = require("../models/CitationParameters");
+const { sendDiscordEmbed } = require('../utils/discordWebhook');
 
 const ParametersController = {
     getCitationParameters: async (req, res) => {
@@ -15,6 +16,15 @@ const ParametersController = {
         const newCitation = new citationParameters({description, amount});
         try {
             const savedCitation = await newCitation.save();
+
+            await sendDiscordEmbed({
+                title: 'Dodano nowy parametr cytacji!',
+                color: 0x00ff00,
+                fields: [
+                    { name: 'Opis', value: description || 'Nie podano', inline: true },
+                    { name: 'Kwota', value: `$ ${amount}` || 'Nie podano', inline: true },
+                ]
+            });
             res.status(201).json(savedCitation);
         } catch (err) {
             res.status(400).json({message: err.message});
