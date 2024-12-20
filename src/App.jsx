@@ -1,7 +1,7 @@
-import {Router} from "./components/Routes/Router.jsx"; // Twoje obecne importy
+import {Router} from "./components/Routes/Router.jsx";
 import {useState, useEffect} from "react";
-import UserMenu from "./components/UserMenu";
-import {UserProvider} from "./context/UserContext.jsx"; // Importujemy komponent UserMenu
+import UserMenu from "./components/UserMenu.jsx";
+import {UserProvider} from "./context/UserContext.jsx";
 
 function App() {
     const [user, setUser] = useState(null);
