@@ -258,14 +258,15 @@ export const BusinessDetails = () => {
                                 rel="noopener noreferrer"
                                 className="text-blue-500 underline"
                             >
-                                <FontAwesomeIcon icon={faGlobe} />
+                                <FontAwesomeIcon icon={faGlobe}/>
                             </a>
                         ) : (
                             "Brak linku"
                         )}
                     </p>
-                    <p><strong>Ostatnia
-                        kontrola:</strong> {reports.length > 0 ? new Date(reports[0].controlDate).toLocaleDateString() : 'Brak raportów'}
+                    <p><strong>Ostatnia kontrola: </strong>
+                        {reports.length > 0 ? new Date(reports.sort((a, b) => new Date(b.controlDate) - new Date(a.controlDate))[0].controlDate).toLocaleDateString()
+                            : 'Brak raportów'}
                     </p>
                 </div>
 
