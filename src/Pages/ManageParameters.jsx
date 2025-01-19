@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import config from '../utils/config.js';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Disclosure } from "@headlessui/react";
@@ -14,7 +15,7 @@ export const ManageParameters = () => {
     useEffect(() => {
         const fetchCitations = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/citationparameters");
+                const response = await axios.get(`${config.URL}/api/citationparameters`);
                 setCitations(response.data);
             } catch (error) {
                 console.error("Błąd pobierania danych:", error);
@@ -31,14 +32,14 @@ export const ManageParameters = () => {
         try {
             if (currentEditId) {
                 const updatedCitation = await axios.put(
-                    `http://localhost:5000/api/citationparameters/${currentEditId}`,
+                    `${config.URL}/api/citationparameters/${currentEditId}`,
                     formData
                 );
                 setCitations(citations.map(citation =>
                     citation._id === currentEditId ? updatedCitation.data : citation
                 ));
             } else {
-                const response = await axios.post("http://localhost:5000/api/citationparameters", formData);
+                const response = await axios.post(`${config.URL}/api/citationparameters`, formData);
                 setCitations([...citations, response.data]);
             }
             closePopup();
@@ -49,7 +50,7 @@ export const ManageParameters = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/citationparameters/${id}`);
+            await axios.delete(`${config.URL}/api/citationparameters/${id}`);
             setCitations(citations.filter((citation) => citation._id !== id));
         } catch (error) {
             console.error("Błąd usuwania cytacji:", error);

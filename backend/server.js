@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const rolesMap = require('./utils/rolesMap.js');
+const getConfig = require('./utils/config');
 
 const requireRole = require('./middlewares/requireRole');
 
@@ -18,6 +19,12 @@ const DiscordStrategy = require('passport-discord').Strategy;
 const session = require('express-session');
 
 const app = express();
+
+app.use((req, res, next) => {
+    const hostname = req.headers.host || req.headers.origin || '';
+    req.config = getConfig(hostname);
+    next();
+});
 
 app.use(express.json());
 app.use(cors({

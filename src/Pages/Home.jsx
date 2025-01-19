@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import config from '../utils/config.js';
 
 export const Home = () => {
     const [summaryData, setSummaryData] = useState({
@@ -12,7 +13,7 @@ export const Home = () => {
     useEffect(() => {
         const fetchSummaryData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/summary');
+                const response = await axios.get(`${config.URL}/api/summary`);
                 console.log('Dane z API:', response.data);
                 setSummaryData(response.data);
             } catch (error) {

@@ -4,6 +4,7 @@ import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import logo from "../assets/fire.png";
 import xmaslogo from "../assets/xmasfire.png";
 import { useNavigate } from "react-router-dom";
+import config from '../utils/config.js';
 
 export const LoginPage = () => {
     const [user, setUser] = useState(null);
@@ -12,11 +13,11 @@ export const LoginPage = () => {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        window.location.href = "http://localhost:5000/auth/discord";
+        window.location.href = `${config.URL}/auth/discord`;
     };
 
     const handleLogout = async () => {
-        const response = await fetch("http://localhost:5000/auth/logout", {
+        const response = await fetch(`${config.URL}/auth/logout`, {
             method: "POST",
             credentials: "include",
         });
@@ -34,7 +35,7 @@ export const LoginPage = () => {
     // Funkcja do sprawdzenia, czy użytkownik jest zalogowany
     useEffect(() => {
         const fetchUserData = async () => {
-            const response = await fetch('http://localhost:5000/api/user', {
+            const response = await fetch(`${config.URL}/api/user`, {
                 credentials: 'include'
             });
 

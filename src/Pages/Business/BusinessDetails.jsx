@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit, faTrash, faFileInvoiceDollar, faGlobe} from "@fortawesome/free-solid-svg-icons";
 import {useParams, useNavigate} from "react-router-dom";
 import axios from 'axios';
+import config from '../../utils/config.js';
 import {Dialog} from '@headlessui/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -52,18 +53,18 @@ export const BusinessDetails = () => {
     }, [business]);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/businesses/${id}`)
+        axios.get(`${config.URL}/api/businesses/${id}`)
             .then(response => {
                 setBusiness(response.data);
                 setNotes(response.data.notes || '');
             })
             .catch(error => console.error('Błąd przy pobieraniu danych biznesu:', error));
 
-        axios.get(`http://localhost:5000/api/businesses/${id}/reports`)
+        axios.get(`${config.URL}/api/businesses/${id}/reports`)
             .then(response => setReports(response.data))
             .catch(error => console.error('Błąd przy pobieraniu raportów:', error));
 
-        axios.get(`http://localhost:5000/api/businesses/${id}/citations`)
+        axios.get(`${config.URL}/api/businesses/${id}/citations`)
             .then(response => setCitations(response.data))
             .catch(error => console.error('Błąd przy pobieraniu cytacji:', error));
     }, [id]);
@@ -89,7 +90,7 @@ export const BusinessDetails = () => {
     };
 
     const handleUpdateNotes = () => {
-        axios.put(`http://localhost:5000/api/businesses/${id}`, {notes})
+        axios.put(`${config.URL}/api/businesses/${id}`, {notes})
             .then(() => {
                 setNotification('Pomyślnie zaktualizowano notatkę!');
                 setTimeout(() => setNotification(''), 3000);
@@ -98,7 +99,7 @@ export const BusinessDetails = () => {
     };
 
     const handleDeleteBusiness = () => {
-        axios.delete(`http://localhost:5000/api/businesses/${id}`)
+        axios.delete(`${config.URL}/api/businesses/${id}`)
             .then(() => navigate('/businesses'))
             .catch(error => console.error('Błąd przy usuwaniu biznesu:', error));
     };
@@ -109,7 +110,7 @@ export const BusinessDetails = () => {
     };
 
     const handleEditBusiness = () => {
-        axios.put(`http://localhost:5000/api/businesses/${id}`, currentBusiness)
+        axios.put(`${config.URL}/api/businesses/${id}`, currentBusiness)
             .then(() => {
                 setNotification('Pomyślnie zaktualizowano biznes!');
                 setTimeout(() => setNotification(''), 3000);
@@ -159,7 +160,7 @@ export const BusinessDetails = () => {
             controlType
         };
 
-        axios.post(`http://localhost:5000/api/businesses/${id}/reports`, reportData)
+        axios.post(`${config.URL}/api/businesses/${id}/reports`, reportData)
             .then(response => {
                 setReports([...reports, response.data]);
                 closeReport();
@@ -174,7 +175,7 @@ export const BusinessDetails = () => {
             citationReason,
         }
 
-        axios.post(`http://localhost:5000/api/businesses/${id}/citations`, citationData)
+        axios.post(`${config.URL}/api/businesses/${id}/citations`, citationData)
             .then(response => {
                 setCitations([...citations, response.data]);
                 closeCitation();

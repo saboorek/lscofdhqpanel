@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
+import config from '../../utils/config.js';
 import { Dialog } from "@headlessui/react";
 
 export const BusinessList = () => {
@@ -33,11 +34,11 @@ export const BusinessList = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/businesses')
+        axios.get(`${config.URL}/api/businesses`)
             .then(response => {
                 setBusinesses(response.data);
                 response.data.forEach(business => {
-                    axios.get(`http://localhost:5000/api/businesses/${business._id}/reports`)
+                    axios.get(`${config.URL}/api/businesses/${business._id}/reports`)
                         .then(reportResponse => {
                             setReports(prevReports => ({
                                 ...prevReports,
@@ -55,7 +56,7 @@ export const BusinessList = () => {
 
         const newBusiness = { name, owner, address, url };
 
-        axios.post('http://localhost:5000/api/businesses', newBusiness)
+        axios.post(`${config.URL}/api/businesses`, newBusiness)
             .then(response => {
                 setBusinesses([...businesses, response.data]);
                 setName('');

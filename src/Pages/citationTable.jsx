@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import config from '../utils/config.js';
 
 export const CitationTable = () => {
     const [citations, setCitations] = useState([]);
@@ -7,7 +8,7 @@ export const CitationTable = () => {
     useEffect(() => {
         const fetchCitations = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/citationParameters");
+                const response = await axios.get(`${config.URL}/api/citationParameters`);
                 setCitations(response.data);
             } catch (error) {
                 console.error("Błąd podczas pobierania danych:", error);
