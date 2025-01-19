@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const rolesMap = require('./utils/rolesMap.js');
 
-// Modele
-// --- //
+const requireRole = require('./middlewares/requireRole');
 
 // Controllers
 const ParametersController = require('./controllers/ParametersController');
@@ -61,6 +60,8 @@ passport.use(new DiscordStrategy({
             .map(roleId => rolesMap[roleId])
             .filter(roleName => roleName);
 
+        console.log('Pobrane role użytkownika:', filteredRoles);
+
         profile.guildRoles = filteredRoles;
         return done(null, profile);
     } catch (err) {
@@ -77,15 +78,22 @@ app.use(passport.session());
 app.get('/auth/discord', passport.authenticate('discord'));
 
 app.get('/auth/discord/callback', passport.authenticate('discord', {
-    failureRedirect: '/',
+    failureRedirect: '/login',
     successRedirect: 'http://localhost:5173/dashboard'
 }));
 
 app.get('/auth/session', (req, res) => {
     if (req.user) {
-        res.json(req.user);
+        res.json({
+            user: req.user,
+            roles: req.user.guildRoles || [],
+            isAuthenticated: true,
+        });
     } else {
-        res.status(401).json({ error: 'Brak aktywnej sesji' });
+        res.status(401).json({
+            message: 'Brak aktywnej sesji',
+            isAuthenticated: false
+        });
     }
 });
 

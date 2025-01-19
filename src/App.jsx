@@ -1,6 +1,7 @@
-import { Router } from "./components/Routes/Router.jsx"; // Twoje obecne importy
-import { useState, useEffect } from "react";
-import UserMenu from "./components/UserMenu"; // Importujemy komponent UserMenu
+import {Router} from "./components/Routes/Router.jsx";
+import {useState, useEffect} from "react";
+import UserMenu from "./components/UserMenu.jsx";
+import {UserProvider} from "./context/UserContext.jsx";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -40,10 +41,12 @@ function App() {
     }, []);
 
     return (
-        <div className="flex bg-gray-800 relative min-h-screen">
-            <UserMenu user={user} logout={handleLogout} />
-            <Router />
-        </div>
+        <UserProvider>
+            <div className="flex bg-gray-800 relative min-h-screen">
+                <UserMenu user={user} logout={handleLogout}/>
+                <Router/>
+            </div>
+        </UserProvider>
     );
 }
 
