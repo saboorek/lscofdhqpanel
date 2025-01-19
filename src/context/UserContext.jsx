@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 const UserContext = createContext();
+import config from '../utils/config.js';
 
 export const useUser = () => useContext(UserContext);
 
@@ -11,7 +12,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/auth/session", { withCredentials: true });
+                const res = await axios.get(`${config.URL}/auth/session`, { withCredentials: true });
                 setUser(res.data);
             } catch (err) {
                 console.error(err);

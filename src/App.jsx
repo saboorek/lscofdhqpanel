@@ -2,13 +2,14 @@ import {Router} from "./components/Routes/Router.jsx";
 import {useState, useEffect} from "react";
 import UserMenu from "./components/UserMenu.jsx";
 import {UserProvider} from "./context/UserContext.jsx";
+import config from "../src/utils/config.js";
 
 function App() {
     const [user, setUser] = useState(null);
     const [notification, setNotification] = useState("");
 
     const fetchUserData = async () => {
-        const response = await fetch('http://localhost:5000/api/user', {
+        const response = await fetch(`${config.URL}/api/user`, {
             credentials: 'include'
         });
 
@@ -22,7 +23,7 @@ function App() {
     };
 
     const handleLogout = async () => {
-        const response = await fetch("http://localhost:5000/auth/logout", {
+        const response = await fetch(`${config.URL}/auth/logout`, {
             method: "POST",
             credentials: "include",
         });

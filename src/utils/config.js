@@ -3,7 +3,7 @@ const config = {
         URL: 'http://localhost:5000',
     },
     production: {
-        URL: 'http://lscofd.sbrkcode.pl',
+        URL: 'http://lscofd.sbrkcode.pl:5000',
     },
 };
 
