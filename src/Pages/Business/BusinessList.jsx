@@ -17,11 +17,7 @@ export const BusinessList = () => {
     const navigate = useNavigate();
 
     const [currentBusinessPage, setCurrentBusinessPage] = useState(1);
-    const businessPerPage = 18;
-
-    const indexOfLastBusiness = currentBusinessPage * businessPerPage;
-    const indexOfFirstBusiness = indexOfLastBusiness - businessPerPage;
-    const currentBusiness = businesses.slice(indexOfFirstBusiness, indexOfLastBusiness);
+    const businessPerPage = 15;
 
     const totalPages = Math.ceil(businesses.length / businessPerPage);
 
@@ -51,16 +47,6 @@ export const BusinessList = () => {
             .catch(error => console.error('Błąd przy pobieraniu biznesów:', error));
     }, []);
 
-    app.get(`${config.URL}/api/businesses/:id/reports`, async (req, res) => {
-        try {
-            const reports = await Report.find({ businessId: req.params.id }).sort({ controlDate: -1 });
-            res.json(reports);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Błąd serwera" });
-        }
-    });
-
     const handleAddBusiness = (e) => {
         e.preventDefault();
 
@@ -80,27 +66,29 @@ export const BusinessList = () => {
     const openForm = () => setIsAddBusinessModalOpen(true);
     const closeForm = () => setIsAddBusinessModalOpen(false);
 
-    const calculateDaysToNextControl = (lastReportDate, controlPassed) => {
+    const calculateDaysToNextControl = (lastReportDate) => {
         const nextControlDate = new Date(lastReportDate);
-        nextControlDate.setDate(nextControlDate.getDate() + (controlPassed ? 60 : 7));
-    
+        nextControlDate.setDate(nextControlDate.getDate() + 60);
+
         const today = new Date();
         const timeDifference = nextControlDate - today;
-    
+
         const daysLeft = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
         return daysLeft >= 0 ? daysLeft : -1;
     };
 
     const sortedBusinesses = businesses.map(business => {
         const businessReports = reports[business._id] || [];
         const lastReport = businessReports.length > 0 ? businessReports[0] : null;
-    
-        const daysToNextControl = lastReport 
-            ? calculateDaysToNextControl(lastReport.controlDate, lastReport.controlPassed) 
-            : -1;
-    
+        const daysToNextControl = lastReport ? calculateDaysToNextControl(lastReport.controlDate) : -1;
         return { ...business, daysToNextControl };
     }).sort((a, b) => a.daysToNextControl - b.daysToNextControl);
+
+    const currentBusiness = sortedBusinesses.slice(
+        (currentBusinessPage - 1) * businessPerPage,
+        currentBusinessPage * businessPerPage
+    );
 
     const formatDaysText = (days) => {
         if (days === 1) {
@@ -128,6 +116,7 @@ export const BusinessList = () => {
                     </div>
                 </div>
             </div>
+
             <div className="bg-gray-900 p-4 rounded-lg w-full">
                 {businesses.length === 0 ? (
                     <p>Brak biznesów w systemie.</p>
@@ -141,6 +130,25 @@ export const BusinessList = () => {
                                 <th className="py-2 px-4 text-left">Czas do następnej kontroli</th>
                             </tr>
                             </thead>
+                            <tbody>
+                            {currentBusiness.map((business) => {
+                                const businessReports = reports[business._id] || [];
+                                const lastReport = businessReports.length > 0 ? businessReports[0] : null;
+                                const lastReportDate = lastReport ? new Date(lastReport.controlDate).toLocaleDateString() : 'Brak raportów';
+                                const daysToNextControl = business.daysToNextControl;
+
+                                return (
+                                    <tr key={business._id}
+                                        className={`border-b border-gray-600 hover:bg-gray-700 cursor-pointer ${daysToNextControl <= 7 ? 'bg-red-800 hover:bg-red-700' : daysToNextControl <=14 ? 'bg-yellow-700 hover:bg-yellow-600' : ''}`}
+                                        onClick={() => handleRowClick(business._id)}
+                                    >
+                                        <td className="py-2 px-4">{business.name}</td>
+                                        <td className="py-2 px-4">{lastReportDate}</td>
+                                        <td className="py-2 px-4">{formatDaysText(daysToNextControl)}</td>
+                                    </tr>
+                                );
+                            })}
+                            </tbody>
                         </table>
 
                         {/* Paginacja */}
