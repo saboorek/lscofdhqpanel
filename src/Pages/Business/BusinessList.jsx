@@ -9,7 +9,7 @@ import { Dialog } from "@headlessui/react";
 export const BusinessList = () => {
     const [businesses, setBusinesses] = useState([]);
     const [isAddBusinessModalOpen, setIsAddBusinessModalOpen] = useState(false);
-    const [reports, setReports] = useState([]);
+    const [reports, setReports] = useState({});
     const [name, setName] = useState('');
     const [owner, setOwner] = useState('');
     const [address, setAddress] = useState('');
@@ -32,17 +32,26 @@ export const BusinessList = () => {
     useEffect(() => {
         axios.get(`${config.URL}/api/businesses`)
             .then(response => {
-                setBusinesses(response.data);
-                response.data.forEach(business => {
+                const businessesData = response.data;
+                setBusinesses(businessesData);
+
+                const reportsPromises = businessesData.map(business =>
                     axios.get(`${config.URL}/api/businesses/${business._id}/reports`)
-                        .then(reportResponse => {
-                            setReports(prevReports => ({
-                                ...prevReports,
-                                [business._id]: reportResponse.data
-                            }));
-                        })
-                        .catch(error => console.error('Błąd przy pobieraniu raportów:', error));
-                });
+                        .then(reportResponse => ({
+                            businessId: business._id,
+                            reports: reportResponse.data
+                        }))
+                );
+
+                Promise.all(reportsPromises)
+                    .then(results => {
+                        const reportsData = {};
+                        results.forEach(result => {
+                            reportsData[result.businessId] = result.reports;
+                        });
+                        setReports(reportsData);
+                    })
+                    .catch(error => console.error('Błąd przy pobieraniu raportów:', error));
             })
             .catch(error => console.error('Błąd przy pobieraniu biznesów:', error));
     }, []);
@@ -68,7 +77,8 @@ export const BusinessList = () => {
 
     const calculateDaysToNextControl = (lastReportDate) => {
         const nextControlDate = new Date(lastReportDate);
-        nextControlDate.setDate(nextControlDate.getDate() + 60);
+        const daysToAdd = controlPassed === false ? 7 : 60;
+        nextControlDate.setDate(nextControlDate.getDate() + daysToAdd);
 
         const today = new Date();
         const timeDifference = nextControlDate - today;
@@ -81,7 +91,11 @@ export const BusinessList = () => {
     const sortedBusinesses = businesses.map(business => {
         const businessReports = reports[business._id] || [];
         const lastReport = businessReports.length > 0 ? businessReports[0] : null;
-        const daysToNextControl = lastReport ? calculateDaysToNextControl(lastReport.controlDate) : -1;
+
+        const controlPassed = lastReport ? lastReport.controlPassed : true;
+
+        const daysToNextControl = lastReport ? calculateDaysToNextControl(lastReport.controlDate, controlPassed) : -1;
+
         return { ...business, daysToNextControl };
     }).sort((a, b) => a.daysToNextControl - b.daysToNextControl);
 
@@ -134,17 +148,24 @@ export const BusinessList = () => {
                             {currentBusiness.map((business) => {
                                 const businessReports = reports[business._id] || [];
                                 const lastReport = businessReports.length > 0 ? businessReports[0] : null;
-                                const lastReportDate = lastReport ? new Date(lastReport.controlDate).toLocaleDateString() : 'Brak raportów';
-                                const daysToNextControl = business.daysToNextControl;
-
+                                const lastReportDate = lastReport ? new Date(lastReport.controlDate).toLocaleDateString() : 'Brak raportu';
+                                const controlPassed = lastReport ? lastReport.controlPassed : null;
+                                let daysToNextControl;
+                                if (controlPassed === null) {
+                                    daysToNextControl = 'Brak raportu';
+                                } else {
+                                    daysToNextControl = calculateDaysToNextControl(lastReport.controlDate, controlPassed);
+                                }
                                 return (
                                     <tr key={business._id}
-                                        className={`border-b border-gray-600 hover:bg-gray-700 cursor-pointer ${daysToNextControl <= 7 ? 'bg-red-800 hover:bg-red-700' : daysToNextControl <=14 ? 'bg-yellow-700 hover:bg-yellow-600' : ''}`}
+                                        className={`border-b border-gray-600 hover:bg-gray-700 cursor-pointer ${typeof daysToNextControl === 'number' && daysToNextControl <= 7 ? 'bg-red-800 hover:bg-red-700' : typeof daysToNextControl === 'number' && daysToNextControl <= 14 ? 'bg-yellow-700 hover:bg-yellow-600' : ''}`}
                                         onClick={() => handleRowClick(business._id)}
                                     >
                                         <td className="py-2 px-4">{business.name}</td>
                                         <td className="py-2 px-4">{lastReportDate}</td>
-                                        <td className="py-2 px-4">{formatDaysText(daysToNextControl)}</td>
+                                        <td className="py-2 px-4">
+                                            {typeof daysToNextControl === 'number' ? formatDaysText(daysToNextControl) : daysToNextControl}
+                                        </td>
                                     </tr>
                                 );
                             })}
