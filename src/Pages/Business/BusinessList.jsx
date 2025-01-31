@@ -75,7 +75,7 @@ export const BusinessList = () => {
     const openForm = () => setIsAddBusinessModalOpen(true);
     const closeForm = () => setIsAddBusinessModalOpen(false);
 
-    const calculateDaysToNextControl = (lastReportDate, controlPassed) => {
+    const calculateDaysToNextControl = (lastReportDate) => {
         const nextControlDate = new Date(lastReportDate);
         const daysToAdd = controlPassed === false ? 7 : 60;
         nextControlDate.setDate(nextControlDate.getDate() + daysToAdd);
